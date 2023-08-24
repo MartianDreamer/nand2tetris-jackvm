@@ -1,5 +1,9 @@
 package main
 
+import "strconv"
+
+var count uint64 = 0
+
 func getTranslationFunction(instruction string) func() string {
 	switch instruction {
 	case "add":
@@ -98,21 +102,25 @@ func lt() string {
 }
 
 func eq() string {
-	return "D=M\n" +
+	result := "D=M\n" +
 		"A=A-1\n" +
 		"D=M-D\n" +
+		"@NOT_TRUE" + strconv.FormatUint(count, 0) + "\n" +
+		"D; JNE\n" +
 		"@SP\n" +
-		"A=M\n" +
-		"M=!D\n" +
-		"A=A-1\n" +
 		"D=M\n" +
-		"A=A-1\n" +
-		"M=D-M\n" +
-		"M=!M\n" +
+		"@2\n" +
+		"A=D-A\n" +
+		"M=-1\n" +
+		"@END" + strconv.FormatUint(count, 0) + "\n" +
+		"0;JMP\n" +
+		"(NOT_TRUE" + strconv.FormatUint(count, 0) + ")\n" +
 		"@SP\n" +
-		"A=M\n" +
 		"D=M\n" +
-		"A=A-1\n" +
-		"A=A-1\n" +
-		"M=D&M\n"
+		"@2\n" +
+		"A=D-A\n" +
+		"M=0\n" +
+		"(END" + strconv.FormatUint(count, 0) + ")\n"
+	count++
+	return result
 }
