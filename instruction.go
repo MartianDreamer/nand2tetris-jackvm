@@ -13,7 +13,7 @@ const (
 )
 
 type Instruction interface {
-	Compile() []string
+	Compile() string
 }
 
 func Parse(instruction string, scope string) Instruction {

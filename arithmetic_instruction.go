@@ -1,6 +1,6 @@
 package main
 
-func getTranslationFunction(instruction string) func() []string {
+func getTranslationFunction(instruction string) func() string {
 	switch instruction {
 	case "add":
 		return add
@@ -29,11 +29,8 @@ type arithmeticInstruction struct {
 	instruction string
 }
 
-func (receiver arithmeticInstruction) Compile() []string {
-	result := startInstruction()
-	result = append(result, getTranslationFunction(receiver.instruction)()...)
-	result = append(result, endInstruction()...)
-	return result
+func (receiver arithmeticInstruction) Compile() string {
+	return startInstruction() + getTranslationFunction(receiver.instruction)() + endInstruction()
 }
 
 func isValid(s string) bool {
@@ -45,99 +42,77 @@ func isValid(s string) bool {
 	}
 }
 
-func startInstruction() []string {
-	return []string{
-		"@SP",
-		"A=M-1",
-	}
+func startInstruction() string {
+	return "@SP\n" +
+		"A=M-1\n"
 }
 
-func endInstruction() []string {
-	return []string{
-		"D=A+1",
-		"@SP",
-		"M=D",
-	}
+func endInstruction() string {
+	return "D=A+1\n" +
+		"@SP\n" +
+		"M=D\n"
 }
 
-func add() []string {
-	return []string{
-		"D=M",
-		"A=A-1",
-		"M=M+D",
-	}
+func add() string {
+	return "D=M\n" +
+		"A=A-1\n" +
+		"M=M+D\n"
 }
 
-func sub() []string {
-	return []string{
-		"D=M",
-		"A=A-1",
-		"M=M-D",
-	}
+func sub() string {
+	return "D=M\n" +
+		"A=A-1\n" +
+		"M=M-D\n"
 }
 
-func neg() []string {
-	return []string{
-		"M=-M",
-	}
+func neg() string {
+	return "M=-M\n"
 }
 
-func and() []string {
-	return []string{
-		"D=M",
-		"A=A-1",
-		"M=D&M",
-	}
+func and() string {
+	return "D=M\n" +
+		"A=A-1\n" +
+		"M=D&M\n"
 }
 
-func or() []string {
-	return []string{
-		"D=M",
-		"A=A-1",
-		"M=D|M",
-	}
+func or() string {
+	return "D=M\n" +
+		"A=A-1\n" +
+		"M=D|M\n"
 }
 
-func not() []string {
-	return []string{
-		"M=!M",
-	}
+func not() string {
+	return "M=!M\n"
 }
 
-func gt() []string {
-	return []string{
-		"D=M",
-		"A=A-1",
-		"M=D-M",
-	}
+func gt() string {
+	return "D=M\n" +
+		"A=A-1\n" +
+		"M=D-M\n"
 }
 
-func lt() []string {
-	return []string{
-		"D=M",
-		"A=A-1",
-		"M=M-D",
-	}
+func lt() string {
+	return "D=M\n" +
+		"A=A-1\n" +
+		"M=M-D\n"
 }
 
-func eq() []string {
-	return []string{
-		"D=M",
-		"A=A-1",
-		"D=M-D",
-		"@SP",
-		"A=M",
-		"M=!D",
-		"A=A-1",
-		"D=M",
-		"A=A-1",
-		"M=D-M",
-		"M=!M",
-		"@SP",
-		"A=M",
-		"D=M",
-		"A=A-1",
-		"A=A-1",
-		"M=D&M",
-	}
+func eq() string {
+	return "D=M\n" +
+		"A=A-1\n" +
+		"D=M-D\n" +
+		"@SP\n" +
+		"A=M\n" +
+		"M=!D\n" +
+		"A=A-1\n" +
+		"D=M\n" +
+		"A=A-1\n" +
+		"M=D-M\n" +
+		"M=!M\n" +
+		"@SP\n" +
+		"A=M\n" +
+		"D=M\n" +
+		"A=A-1\n" +
+		"A=A-1\n" +
+		"M=D&M\n"
 }
