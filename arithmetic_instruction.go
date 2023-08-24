@@ -1,4 +1,4 @@
-package translator
+package main
 
 func getTranslationFunction(instruction string) func() []string {
 	switch instruction {

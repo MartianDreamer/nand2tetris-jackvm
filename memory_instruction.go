@@ -1,4 +1,4 @@
-package translator
+package main
 
 type memoryInstructionType int8
 type memorySegment int8
