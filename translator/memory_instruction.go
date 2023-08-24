@@ -1,23 +1,21 @@
 package translator
 
-import "errors"
-
 type memoryInstructionType int8
 type memorySegment int8
 
 const (
-	PUSH memoryInstructionType = iota
-	POP
+	push memoryInstructionType = iota
+	pop
 )
 
 func getMemoryInstructionType(s string) memoryInstructionType {
 	switch s {
 	case "push":
-		return PUSH
+		return push
 	case "pop":
-		return POP
+		return pop
 	default:
-		panic("invalid instruction")
+		return invalid
 	}
 }
 
@@ -30,41 +28,36 @@ const (
 	static
 	pointer
 	temp
-	invalid
 )
 
-func getSegment(s string) (memorySegment, error) {
+func getSegment(s string) memorySegment {
 	switch s {
 	case "argument":
-		return arg, nil
+		return arg
 	case "local":
-		return lcl, nil
+		return lcl
 	case "this":
-		return this, nil
+		return this
 	case "that":
-		return that, nil
+		return that
 	case "constant":
-		return constant, nil
+		return constant
 	case "static":
-		return static, nil
+		return static
 	case "pointer":
-		return pointer, nil
+		return pointer
 	case "temp":
-		return temp, nil
+		return temp
 	default:
-		return invalid, errors.New("invalid segment")
+		return invalid
 	}
 }
 
 type memoryInstruction struct {
-	instruction string
-	iType       memoryInstructionType
-	segment     memorySegment
-	offset      uint8
-}
-
-func (m memoryInstruction) toString() string {
-	return m.instruction
+	scope   string
+	iType   memoryInstructionType
+	segment memorySegment
+	offset  uint8
 }
 
 func (m memoryInstruction) Compile() []string {
