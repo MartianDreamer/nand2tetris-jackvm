@@ -42,10 +42,10 @@ func categorizeInstruction(parts []string) int8 {
 	if len(parts) == 3 &&
 		getMemoryInstructionType(parts[0]) != invalid &&
 		getSegment(parts[1]) != invalid {
-		return arithmetic
+		return memory
 	} else if len(parts) == 1 &&
 		isValid(parts[0]) {
-		return memory
+		return arithmetic
 	}
 	return invalid
 }

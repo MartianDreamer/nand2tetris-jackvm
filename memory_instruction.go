@@ -63,10 +63,14 @@ type memoryInstruction struct {
 }
 
 func (m memoryInstruction) Compile() string {
-	if m.iType == push {
+	switch m.iType {
+	case push:
 		return compilePushInstruction(m)
+	case pop:
+		return compilePopFunction(m)
+	default:
+		panic("invalid instruction")
 	}
-	return "hello"
 }
 
 func assignD(offset int) string {
@@ -84,12 +88,11 @@ func pushToStack() string {
 
 func popFromStack() string {
 	return "@SP\n" +
-		"A=M\n" +
+		"AM=M-1\n" +
 		"D=M\n" +
 		"@R13\n" +
-		"M=D\n" +
-		"@SP\n" +
-		"M=M-1\n"
+		"A=M\n" +
+		"M=D\n"
 }
 
 func getValueFromArg(offset int) string {
@@ -125,12 +128,12 @@ func getValueFromConst(offset int) string {
 }
 
 func getValueFromStatic(offset int, scope string) string {
-	return "@" + scope + strconv.FormatInt(int64(offset), 0) + "\n" +
+	return "@" + scope + "." + strconv.FormatInt(int64(offset), 0) + "\n" +
 		"D=M\n"
 }
 
 func getValueFromTemp(offset int) string {
-	return "@" + strconv.FormatInt(int64(7+offset), 0) + "\n" +
+	return "@" + strconv.FormatInt(int64(5+offset), 0) + "\n" +
 		"D=M\n"
 }
 
@@ -171,4 +174,92 @@ func compilePushInstruction(m memoryInstruction) string {
 	}
 	result += pushToStack()
 	return result
+}
+
+func findArgAddress(offset int) string {
+	return assignD(offset) +
+		"@ARG\n" +
+		"D=D+M\n" +
+		"@R13\n" +
+		"M=D\n"
+}
+
+func findLclAddress(offset int) string {
+	return assignD(offset) +
+		"@LCL\n" +
+		"D=D+M\n" +
+		"@R13\n" +
+		"M=D\n"
+}
+
+func findThisAddress(offset int) string {
+	return assignD(offset) +
+		"@THIS\n" +
+		"D=D+M\n" +
+		"@R13\n" +
+		"M=D\n"
+}
+
+func findThatAddress(offset int) string {
+	return assignD(offset) +
+		"@THAT\n" +
+		"D=D+M\n" +
+		"@R13\n" +
+		"M=D\n"
+}
+
+func putOnPointerSegment(offset int) string {
+	switch offset {
+	case 0:
+		return "@SP\n" +
+			"AM=M-1\n" +
+			"D=M\n" +
+			"@THIS\n" +
+			"M=D\n"
+	case 1:
+		return "@SP\n" +
+			"AM=M-1\n" +
+			"D=M\n" +
+			"@THAT\n" +
+			"M=D\n"
+	default:
+		panic("invalid offset in pointer segment")
+	}
+}
+
+func putOnTempSegment(offset int) string {
+	return "@SP\n" +
+		"AM=M-1\n" +
+		"D=M\n" +
+		"@" + strconv.FormatInt(int64(5+offset), 0) + "\n" +
+		"M=D\n"
+}
+
+func putOnStaticSegment(offset int, scope string) string {
+	return "@SP\n" +
+		"AM=M-1\n" +
+		"D=M\n" +
+		"@" + scope + "." + strconv.FormatInt(int64(offset), 0) +
+		"M=D\n"
+}
+
+func compilePopFunction(m memoryInstruction) string {
+	switch m.segment {
+	case arg:
+		return findArgAddress(m.offset) + popFromStack()
+	case lcl:
+		return findLclAddress(m.offset) + popFromStack()
+	case this:
+		return findThisAddress(m.offset) + popFromStack()
+	case that:
+		return findThatAddress(m.offset) + popFromStack()
+	case static:
+		return putOnStaticSegment(m.offset, m.scope)
+	case temp:
+		return putOnTempSegment(m.offset)
+	case pointer:
+		return putOnPointerSegment(m.offset)
+	default:
+		panic("invalid segment")
+	}
 }
