@@ -25,13 +25,13 @@ func Parse(instruction string, scope string) Instruction {
 			instruction: instruction,
 		}
 	case memory:
-		offset, _ := strconv.ParseUint(parts[2], 0, 8)
+		offset, _ := strconv.ParseInt(parts[2], 0, 8)
 		segment := getSegment(parts[1])
 		return memoryInstruction{
 			scope:   scope,
 			iType:   getMemoryInstructionType(parts[0]),
 			segment: segment,
-			offset:  uint8(offset),
+			offset:  int(offset),
 		}
 	default:
 		panic("failed to parse instruction")
