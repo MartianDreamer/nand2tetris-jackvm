@@ -56,7 +56,7 @@ func endProgram() string {
 }
 
 func setupSp() string {
-	return "@257\n" +
+	return "@256\n" +
 		"D=A\n" +
 		"@SP\n" +
 		"M=D\n"
