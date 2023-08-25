@@ -22,12 +22,16 @@ func Translate(filePath string) {
 	outputFile := createFile(outputPath)
 	writer := bufio.NewWriter(outputFile)
 	defer func(outputFile *os.File) {
-		writer.Flush()
+		errFlush := writer.Flush()
+		if errFlush != nil {
+			panic("failed to write file")
+		}
 		err := outputFile.Close()
 		if err != nil {
 			return
 		}
 	}(outputFile)
+	write(writer, setupSp())
 	line, readErr := reader.ReadString('\n')
 	for ; readErr == nil; line, readErr = reader.ReadString('\n') {
 		line = strings.Replace(line, "\r\n", "", 1)
@@ -42,4 +46,18 @@ func Translate(filePath string) {
 		instruction := Parse(line, scope)
 		write(writer, instruction.Compile())
 	}
+	write(writer, endProgram())
+}
+
+func endProgram() string {
+	return "(END_PROG)\n" +
+		"@END_PROG\n" +
+		"0; JMP\n"
+}
+
+func setupSp() string {
+	return "@257\n" +
+		"D=A\n" +
+		"@SP\n" +
+		"M=D\n"
 }
