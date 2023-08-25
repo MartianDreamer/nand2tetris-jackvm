@@ -18,14 +18,14 @@ func getTranslationFunction(instruction string) func() string {
 		return or
 	case "not":
 		return not
-	case "qt":
+	case "gt":
 		return gt
 	case "lt":
 		return lt
 	case "eq":
 		return eq
 	default:
-		panic("invalid instruction")
+		panic("invalid instruction " + instruction)
 	}
 }
 
@@ -90,15 +90,53 @@ func not() string {
 }
 
 func gt() string {
-	return "D=M\n" +
+	result := "D=M\n" +
 		"A=A-1\n" +
-		"M=D-M\n"
+		"D=M-D\n" +
+		"@NOT_TRUE" + strconv.FormatUint(count, 10) + "\n" +
+		"D; JLE\n" +
+		"@SP\n" +
+		"D=M\n" +
+		"@2\n" +
+		"AD=D-A\n" +
+		"M=-1\n" +
+		"@END" + strconv.FormatUint(count, 10) + "\n" +
+		"0;JMP\n" +
+		"(NOT_TRUE" + strconv.FormatUint(count, 10) + ")\n" +
+		"@SP\n" +
+		"D=M\n" +
+		"@2\n" +
+		"AD=D-A\n" +
+		"M=0\n" +
+		"(END" + strconv.FormatUint(count, 10) + ")\n" +
+		"A=D\n"
+	count++
+	return result
 }
 
 func lt() string {
-	return "D=M\n" +
+	result := "D=M\n" +
 		"A=A-1\n" +
-		"M=M-D\n"
+		"D=M-D\n" +
+		"@NOT_TRUE" + strconv.FormatUint(count, 10) + "\n" +
+		"D; JGE\n" +
+		"@SP\n" +
+		"D=M\n" +
+		"@2\n" +
+		"AD=D-A\n" +
+		"M=-1\n" +
+		"@END" + strconv.FormatUint(count, 10) + "\n" +
+		"0;JMP\n" +
+		"(NOT_TRUE" + strconv.FormatUint(count, 10) + ")\n" +
+		"@SP\n" +
+		"D=M\n" +
+		"@2\n" +
+		"AD=D-A\n" +
+		"M=0\n" +
+		"(END" + strconv.FormatUint(count, 10) + ")\n" +
+		"A=D\n"
+	count++
+	return result
 }
 
 func eq() string {
@@ -110,7 +148,7 @@ func eq() string {
 		"@SP\n" +
 		"D=M\n" +
 		"@2\n" +
-		"A=D-A\n" +
+		"AD=D-A\n" +
 		"M=-1\n" +
 		"@END" + strconv.FormatUint(count, 10) + "\n" +
 		"0;JMP\n" +
@@ -118,9 +156,10 @@ func eq() string {
 		"@SP\n" +
 		"D=M\n" +
 		"@2\n" +
-		"A=D-A\n" +
+		"AD=D-A\n" +
 		"M=0\n" +
-		"(END" + strconv.FormatUint(count, 10) + ")\n"
+		"(END" + strconv.FormatUint(count, 10) + ")\n" +
+		"A=D\n"
 	count++
 	return result
 }

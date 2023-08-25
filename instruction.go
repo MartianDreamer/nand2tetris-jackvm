@@ -25,7 +25,7 @@ func Parse(instruction string, scope string) Instruction {
 			instruction: instruction,
 		}
 	case memory:
-		offset, _ := strconv.ParseInt(parts[2], 0, 8)
+		offset, _ := strconv.ParseInt(parts[2], 0, 16)
 		segment := getSegment(parts[1])
 		return memoryInstruction{
 			scope:   scope,
