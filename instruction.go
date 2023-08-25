@@ -10,6 +10,7 @@ const (
 	invalid         = -1
 	arithmetic int8 = 1
 	memory     int8 = 2
+	branching  int8 = 3
 )
 
 type Instruction interface {
@@ -33,6 +34,17 @@ func Parse(instruction string, scope string) Instruction {
 			segment: segment,
 			offset:  int(offset),
 		}
+	case branching:
+		var label *string
+		if len(parts) < 2 {
+			label = nil
+		} else {
+			label = &parts[1]
+		}
+		return branchingInstruction{
+			instruction: parts[0],
+			label:       label,
+		}
 	default:
 		panic("failed to parse instruction " + instruction + " in " + scope)
 	}
@@ -44,8 +56,10 @@ func categorizeInstruction(parts []string) int8 {
 		getSegment(parts[1]) != invalid {
 		return memory
 	} else if len(parts) == 1 &&
-		isValid(parts[0]) {
+		isValidArithmeticOperations(parts[0]) {
 		return arithmetic
+	} else if isValidBranchingOperation(parts) {
+		return branching
 	}
 	return invalid
 }

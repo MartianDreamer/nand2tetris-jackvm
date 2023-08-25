@@ -37,7 +37,7 @@ func (receiver arithmeticInstruction) Compile() string {
 	return startInstruction() + getTranslationFunction(receiver.instruction)() + endInstruction()
 }
 
-func isValid(s string) bool {
+func isValidArithmeticOperations(s string) bool {
 	switch s {
 	case "add", "sub", "neg", "eq", "gt", "lt", "and", "or", "not":
 		return true
