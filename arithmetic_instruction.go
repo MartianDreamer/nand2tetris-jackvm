@@ -105,22 +105,22 @@ func eq() string {
 	result := "D=M\n" +
 		"A=A-1\n" +
 		"D=M-D\n" +
-		"@NOT_TRUE" + strconv.FormatUint(count, 0) + "\n" +
+		"@NOT_TRUE" + strconv.FormatUint(count, 10) + "\n" +
 		"D; JNE\n" +
 		"@SP\n" +
 		"D=M\n" +
 		"@2\n" +
 		"A=D-A\n" +
 		"M=-1\n" +
-		"@END" + strconv.FormatUint(count, 0) + "\n" +
+		"@END" + strconv.FormatUint(count, 10) + "\n" +
 		"0;JMP\n" +
-		"(NOT_TRUE" + strconv.FormatUint(count, 0) + ")\n" +
+		"(NOT_TRUE" + strconv.FormatUint(count, 10) + ")\n" +
 		"@SP\n" +
 		"D=M\n" +
 		"@2\n" +
 		"A=D-A\n" +
 		"M=0\n" +
-		"(END" + strconv.FormatUint(count, 0) + ")\n"
+		"(END" + strconv.FormatUint(count, 10) + ")\n"
 	count++
 	return result
 }

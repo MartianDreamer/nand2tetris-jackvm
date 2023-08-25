@@ -74,7 +74,7 @@ func (m memoryInstruction) Compile() string {
 }
 
 func assignD(offset int) string {
-	return "@" + strconv.FormatInt(int64(offset), 0) + "\n" +
+	return "@" + strconv.FormatInt(int64(offset), 10) + "\n" +
 		"D=A\n"
 }
 
@@ -128,12 +128,12 @@ func getValueFromConst(offset int) string {
 }
 
 func getValueFromStatic(offset int, scope string) string {
-	return "@" + scope + "." + strconv.FormatInt(int64(offset), 0) + "\n" +
+	return "@" + scope + "." + strconv.FormatInt(int64(offset), 10) + "\n" +
 		"D=M\n"
 }
 
 func getValueFromTemp(offset int) string {
-	return "@" + strconv.FormatInt(int64(5+offset), 0) + "\n" +
+	return "@" + strconv.FormatInt(int64(5+offset), 10) + "\n" +
 		"D=M\n"
 }
 
@@ -231,7 +231,7 @@ func putOnTempSegment(offset int) string {
 	return "@SP\n" +
 		"AM=M-1\n" +
 		"D=M\n" +
-		"@" + strconv.FormatInt(int64(5+offset), 0) + "\n" +
+		"@" + strconv.FormatInt(int64(5+offset), 10) + "\n" +
 		"M=D\n"
 }
 
@@ -239,7 +239,7 @@ func putOnStaticSegment(offset int, scope string) string {
 	return "@SP\n" +
 		"AM=M-1\n" +
 		"D=M\n" +
-		"@" + scope + "." + strconv.FormatInt(int64(offset), 0) +
+		"@" + scope + "." + strconv.FormatInt(int64(offset), 10) +
 		"M=D\n"
 }
 

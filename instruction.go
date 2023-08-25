@@ -34,7 +34,7 @@ func Parse(instruction string, scope string) Instruction {
 			offset:  int(offset),
 		}
 	default:
-		panic("failed to parse instruction")
+		panic("failed to parse instruction " + instruction + " in " + scope)
 	}
 }
 
