@@ -239,7 +239,7 @@ func putOnStaticSegment(offset int, scope string) string {
 	return "@SP\n" +
 		"AM=M-1\n" +
 		"D=M\n" +
-		"@" + scope + "." + strconv.FormatInt(int64(offset), 10) +
+		"@" + scope + "." + strconv.FormatInt(int64(offset), 10) + "\n" +
 		"M=D\n"
 }
 
