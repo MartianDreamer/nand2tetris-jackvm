@@ -35,15 +35,9 @@ func Parse(instruction string, scope string) Instruction {
 			offset:  int(offset),
 		}
 	case branching:
-		var label *string
-		if len(parts) < 2 {
-			label = nil
-		} else {
-			label = &parts[1]
-		}
 		return branchingInstruction{
 			instruction: parts[0],
-			label:       label,
+			label:       parts[1],
 		}
 	default:
 		panic("failed to parse instruction " + instruction + " in " + scope)

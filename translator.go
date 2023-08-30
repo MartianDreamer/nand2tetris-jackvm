@@ -6,16 +6,8 @@ import (
 	"strings"
 )
 
-func Translate(filePath string) {
-	filePath = strings.Replace(filePath, "\\", "/", -1)
-	source := openFile(filePath)
+func Translate(source *os.File, filePath string) {
 	reader := bufio.NewReader(source)
-	defer func(source *os.File) {
-		err := source.Close()
-		if err != nil {
-			return
-		}
-	}(source)
 	outputPath := strings.Replace(filePath, ".vm", ".asm", 1)
 	filePathParts := strings.Split(filePath, "/")
 	scope := strings.Replace(filePathParts[len(filePathParts)-1], ".vm", "", 1)
